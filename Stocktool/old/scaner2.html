@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Folder Scanner</title>
+    <style>
+        ul {
+            list-style-type: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Folder Scanner</h1>
+    <ul id="fileList"></ul>
+
+    <script>
+        // Folder path to scan
+        var folderPath = '/'; // Replace with the actual folder path
+
+        // Function to generate href links
+        function generateLinks(files) {
+            var fileList = document.getElementById('fileList');
+
+            // Loop through each file
+            files.forEach(function(file) {
+                var filePath = folderPath + '/' + file;
+                var fileName = file;
+
+                // Create the href link
+                var link = document.createElement('a');
+                link.href = filePath;
+                link.innerHTML = fileName;
+
+                // Create a list item and append the link
+                var listItem = document.createElement('li');
+                listItem.appendChild(link);
+
+                // Append the list item to the file list
+                fileList.appendChild(listItem);
+            });
+        }
+
+        // AJAX request to get the list of files in the folder
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var files = JSON.parse(xhr.responseText);
+                generateLinks(files);
+            }
+        };
+        xhr.open('GET', 'scan_folder.php?folder=' + encodeURIComponent(folderPath), true);
+        xhr.send();
+    </script>
+</body>
+</html>
