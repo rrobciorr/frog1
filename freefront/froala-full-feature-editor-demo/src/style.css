@@ -1,0 +1,8 @@
+/* Create some space for this demo on CodePen.
+*/
+
+#froala-editor {
+  min-height: 200px;
+  margin: 0px 8px 20px 40px;
+  border: 1px solid #ccc;
+}

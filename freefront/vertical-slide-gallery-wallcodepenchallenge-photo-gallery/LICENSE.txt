@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-Copyright (c) 2022 Coding Artist (https://codepen.io/Coding-Artist/pen/ZEePgdG)
+Copyright (c) 2023 Jordan (https://codepen.io/DeyJordan/pen/LYMNOwV)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
