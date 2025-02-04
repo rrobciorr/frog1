@@ -10,3 +10,6 @@ git add .; git commit -m $(date +%Y-%m-%d); git push origin main
 git add .; git commit -m "new version"; git push origin main
 
 apk add btop , mc , ranger , python3 ,
+
+sudo tail -f /var/log/apache2/error.log
+
