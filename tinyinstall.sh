@@ -21,12 +21,13 @@ apk add --no-cache \
     php-zip \
     php-phar \
     php-mbstring \
-    php-ctype
+    php-ctype \
+    pho-session
 
 # Restart PHP service (if applicable)
-if [ -f /etc/init.d/php-fpm ]; then
-    rc-service php-fpm restart
-    echo "PHP-FPM restarted."
-fi
+
+    rc-service apache2 restart
+    echo "apache2 restarted."
+
 
 echo "PHP extensions installed successfully!"
