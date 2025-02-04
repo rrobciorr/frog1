@@ -20,7 +20,8 @@ apk add --no-cache \
     php-iconv \
     php-zip \
     php-phar \
-    php-mbstring
+    php-mbstring \
+    php-ctype
 
 # Restart PHP service (if applicable)
 if [ -f /etc/init.d/php-fpm ]; then
