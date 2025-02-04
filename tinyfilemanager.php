@@ -87,7 +87,7 @@ $path_display_mode = 'full';
 
 // Allowed file extensions for create and rename files
 // e.g. 'txt,html,css,js'
-$allowed_file_extensions = '*';
+$allowed_file_extensions = 'txt,html,css,js,php,ttf';
 
 // Allowed file extensions for upload files
 // e.g. 'gif,png,jpg,html,txt'
