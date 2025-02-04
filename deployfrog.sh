@@ -31,3 +31,5 @@ chown -R www-data:www-data "$TARGET_DIR"
 chmod -R 755 "$TARGET_DIR"
 
 echo "Deployment completed successfully!"
+
+rc-service apache2 restart
