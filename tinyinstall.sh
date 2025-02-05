@@ -31,3 +31,13 @@ apk add --no-cache \
 
 
 echo "PHP extensions installed successfully!"
+
+
+
+# install jpgraph 
+
+cd /var/www/html/frog1/Stocktool/lib
+wget http://jpgraph.net/download/download.php?p=5 -O jpgraph.tar.gz
+tar -xvzf jpgraph.tar.gz
+mv jpgraph-*/ jpgraph
+rm jpgraph.tar.gz
