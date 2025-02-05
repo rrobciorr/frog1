@@ -1,62 +1,76 @@
 <?php
+
+// Include necessary libraries
 include "lib/conect.php";
 include "lib/view.php";
 include "lib/example6.1.php";
+
+/**
+ * Calculate the average of the last $period elements in $data.
+ */
 function average($data, $period = 0)
 {
-    if (!$period)
-        $period = sizeof($data);
+    if (!$period) {
+        $period = count($data);
+    }
 
-    $arr = array_slice($data, -$period);
-    $avr = array_sum($arr) / count($arr);
-    return $avr;
+    $subset = array_slice($data, -$period);
+    return array_sum($subset) / count($subset);
 }
 
-function sma_calculate($data)
-{ //Simple Moving Average (SMA)   //$period =26; //12
+/**
+ * Calculate Simple Moving Average (SMA).
+ */
+function sma_calculate($data, $period = 26)
+{
+    $sma_value = average($data, $period);
+    $last_price = end($data);
+    $percentage_change = round(100 * ($last_price - $sma_value) / $sma_value, 1);
 
-    $period = 26;
-    $avr = average($data, $period);
-    $last_price = $data[sizeof($data) - 1];
-    $perc_gain = 100 * ($last_price - $avr) / $avr;
-    $perc_gain = round($perc_gain, 1);
+    $status = $percentage_change > 0 ? "above" : "below";
+    $sma_info = "Last price is {$percentage_change}% {$status} the {$period}-day average.";
 
-    $sma_info = "Last price is " . $perc_gain . " % " . ["below ", "above "][$perc_gain > 0] . $period . " days average.";
-    return [$perc_gain, $sma_info];
+    return [$percentage_change, $sma_info];
 }
 
+/**
+ * Class representing different trading tactics.
+ */
 class Tactic
 {
     public $id;
-    public static $tacticsdisponible = array(4);
-    public ?string $description;
-    public $day;
-
-    public $money;
-    public $stock;
-    public $stockhistory = array();
-    public $pricehistory = array();
-    public $tacticvalue = 12; // 0 -100 % 
-    public $maxprice;
-    public $income;
-    public $incomegrow = 1.01;
-    public $normalmoney;
-    public $buysize = 3000;
-    public $buyperiod = 1; //important value 
-    public $sellsize = 15;
-    public $sellperiod = 30;
-    public $drophistory;
+    public static array $available_tactics = [4];
+    public ?string $description = null;
+    
+    public $money = 10000;
+    public $stock = 0;
+    public array $stock_history = [];
+    public array $price_history = [];
+    
+    public $tactic_value = 12; // 0 - 100% 
+    public $max_price = 0;
+    public $income = 2000;
+    public $income_growth = 1.01;
+    public $normal_money = 10000;
+    
+    public $buy_size = 3000;
+    public $buy_period = 1; // Important value 
+    public $sell_size = 15;
+    public $sell_period = 30;
+    
+    public $drop_history = [];
     public int $start;
     public int $end;
     public $price;
-    public $tactic2value = 3;
-    public $smaperiod = 26;
-    public $tacticperiod = 580;
-    public $smavalue = 1;
-    public $smahistory;
-
-    public $yeargainhistory = array();
-    public $todayproposition;
+    
+    public $tactic2_value = 3;
+    public $sma_period = 26;
+    public $tactic_period = 580;
+    
+    public $sma_value = 1;
+    public $sma_history = [];
+    public $year_gain_history = [];
+    public $today_proposition;
 
     public function __construct($id, $start, $end)
     {
@@ -64,179 +78,151 @@ class Tactic
         $this->reset($start, $end);
     }
 
+    /**
+     * Reset tactic parameters.
+     */
     public function reset($start, $end)
     {
         $this->money = 10000;
         $this->stock = 0;
-        $this->maxprice = 0;
+        $this->max_price = 0;
         $this->income = 2000;
-        $this->normalmoney = 10000;
-        $this->drophistory = array();
-        $this->smahistory = array();
+        $this->normal_money = 10000;
+        $this->drop_history = [];
+        $this->sma_history = [];
         $this->start = $start;
         $this->end = $end;
-        $this->stockhistory = array();
-        $this->pricehistory = array();
+        $this->stock_history = [];
+        $this->price_history = [];
     }
 
+    /**
+     * Execute a buy action if conditions are met.
+     */
     public function buy()
     {
-        if ($this->money > 0 && $this->day % $this->buyperiod == 0) {
-            $this->stock += $this->buysize / $this->price;
-            $this->money -= $this->buysize;
+        if ($this->money > 0 && $this->day % $this->buy_period === 0) {
+            $this->stock += $this->buy_size / $this->price;
+            $this->money -= $this->buy_size;
         }
     }
 
-
-    public function everydayturn($price, $day, $prices)
+    /**
+     * Executes the tactic's actions for a given day.
+     */
+    public function execute_day($price, $day, $prices)
     {
-
         $this->price = $price;
         $this->day = $day;
 
+        switch ($this->id) {
+            case 1: // SMA Strategy
+                $this->description = "SMA Strategy";
+                $recent_prices = array_slice($prices, $day - $this->sma_period, $this->sma_period);
+                $current_sma = sma_calculate($recent_prices)[0];
+                $this->sma_history[] = $current_sma;
 
-        if ($this->id == 1) {
-            $this->description = "sma";
-            $data = array_slice($prices, ($day - $this->smaperiod), $this->smaperiod);
-            $actualsma = sma_calculate($data)[0];
-            array_push($this->smahistory, $actualsma);
+                if ($day > $this->start) {
+                    $sma_history_recent = array_slice($this->sma_history, -100);
+                    asort($sma_history_recent);
 
-
-            if ($day > $this->start) { //start trading
-                $smahistory2 = array_slice($this->smahistory, -100);
-                asort($smahistory2);
-
-                if ($actualsma < $smahistory2[$this->smavalue]) //if sma is low
-                    $this->buy();
-
-            }
-        }
-
-
-        if ($this->id == 2) {
-            $this->description = "buy at relative drop ";
-            if ($price > $this->maxprice) //calculations
-                $this->maxprice = $price;
-            $dropvalue = (($price / $this->maxprice) - 1) * 100;
-            array_push($this->drophistory, $dropvalue);
-            asort($this->drophistory);
-
-            if ($day > $this->start) { //start trading
-                if ($dropvalue < $this->drophistory[$this->tactic2value])
-                    $this->buy();
-            }
-        }
-
-
-        if ($this->id == 3) {
-            $this->description = "buy every month ";
-            if ($day > $this->start) //start trading
-                $this->buy();
-        }
-
-
-
-        if ($this->id == 4) {
-            $this->description = "buy at 10% drop";
-            if ($price > $this->maxprice) //calculations
-                $this->maxprice = $price;
-
-            if ($day > $this->start) { //start trading
-                if ($price < ($this->maxprice * ((100 - $this->tacticvalue) / 100))) {
-                    $this->buy();
-                    if ($day == $this->end)
-                        $this->todayproposition = "today you should buy";
-                } else {
-                    if ($day == $this->end)
-                        $this->todayproposition = "today you should sell" . "\r\n";
-                    if ($this->stock > 0 && $day % $this->sellperiod == 0) {
-                        $this->money += $this->sellsize * $price;
-                        $this->stock -= $this->sellsize;
+                    if ($current_sma < $sma_history_recent[$this->sma_value]) {
+                        $this->buy();
                     }
                 }
-            }
+                break;
+
+            case 2: // Buy at Relative Drop
+                $this->description = "Buy at Relative Drop";
+                $this->max_price = max($this->max_price, $price);
+                $drop_value = ( ($price / $this->max_price) - 1 ) * 100;
+                $this->drop_history[] = $drop_value;
+                asort($this->drop_history);
+
+                if ($day > $this->start && $drop_value < $this->drop_history[$this->tactic2_value]) {
+                    $this->buy();
+                }
+                break;
+
+            case 3: // Buy Every Month
+                $this->description = "Buy Every Month";
+                if ($day > $this->start) {
+                    $this->buy();
+                }
+                break;
+
+            case 4: // Buy at 10% Drop
+                $this->description = "Buy at 10% Drop";
+                $this->max_price = max($this->max_price, $price);
+
+                if ($day > $this->start) {
+                    if ($price < $this->max_price * ((100 - $this->tactic_value) / 100)) {
+                        $this->buy();
+                        $this->today_proposition = "Today you should buy";
+                    } else {
+                        $this->today_proposition = "Today you should sell";
+
+                        if ($this->stock > 0 && $day % $this->sell_period === 0) {
+                            $this->money += $this->sell_size * $price;
+                            $this->stock -= $this->sell_size;
+                        }
+                    }
+                }
+                break;
         }
-        array_push($this->stockhistory, $this->stock);
-        array_push($this->pricehistory, $this->price);
 
-        if ($day > $this->start) {
-            if ($day % 30 == 0) { //wypłata
-                $this->money += $this->income;
-                $this->normalmoney += $this->income;
-                $this->income *= $this->incomegrow;
-            }
+        $this->stock_history[] = $this->stock;
+        $this->price_history[] = $this->price;
 
+        if ($day > $this->start && $day % 30 === 0) {
+            $this->money += $this->income;
+            $this->normal_money += $this->income;
+            $this->income *= $this->income_growth;
         }
     }
-    public function geteffect()
+
+    /**
+     * Calculate the final effect of the tactic.
+     */
+    public function get_effect()
     {
-        $value = ($this->price * $this->stock) + $this->money;
-        $gain = 100 * ($value - $this->normalmoney) / $this->normalmoney;
-        $yeargain = $gain / (($this->end + 1 - $this->start) / 252);
-        array_push($this->yeargainhistory, $yeargain);
+        $total_value = ($this->price * $this->stock) + $this->money;
+        $gain = 100 * ($total_value - $this->normal_money) / $this->normal_money;
+        $year_gain = $gain / (($this->end + 1 - $this->start) / 252);
+        $this->year_gain_history[] = $year_gain;
 
-        $efect = array("tactic" . $this->id, $this->money, $this->stock, $this->price, $this->normalmoney, $this->end, $this->start, $this->description);
-
-        return $efect;
+        return [
+            "Tactic " . $this->id,
+            $this->money,
+            $this->stock,
+            $this->price,
+            $this->normal_money,
+            $this->end,
+            $this->start,
+            $this->description
+        ];
     }
-
-
-
 }
 
+//////////////////  *MAIN SCRIPT*  //////////////////
 
+foreach (["AAPL", "SPY", "MCD", "PEP", "PFE", "WMT", "MSFT", "MAR"] as $ticker) {
+    $prices = get_prices($ticker);
+    $end = count($prices) - 1;
+    $tactic_period = 580;
 
-//////////////////  *MAIN*  //////////////////
-foreach (["AAPL", "SPY", "MCD","PEP","PFE","WMT","MSFT","MAR"] as $tick) {
-    $prices = get_prices($tick);
-    $end = sizeof($prices) - 1; //2516
-    $tacticperiod = 580;
-
-    foreach (range(1, 1, 1) as $botparameter) {
-        $tactics = array();
-        foreach ((Tactic::$tacticsdisponible) as $id)
-            array_push($tactics, new Tactic($id, $start = $end, $end));
-
-        $tactics[0]->buyperiod = $botparameter;
-        for ($bot = 710; $bot > 700; $bot -= 70) {
-
-            $start = $bot; //trading start day
-
-            foreach ($tactics as $tactic)
-                $tactic->reset($start, $end);
-
-            for ($day = $start - $tacticperiod; $day <= $end; $day++) foreach ($tactics as $tactic)
-                    $tactic->everydayturn($prices[$day], $day, $prices);
-
-
-            $effects = array(); foreach ($tactics as $tactic)
-                array_push($effects, $tactic->geteffect());
-
-
-            // printeffect2($effects);
-
-
-        } //end bot
-        $data = $tactics[0]->yeargainhistory;
-
-        $data = array_filter($data);
-
-        draw2chart($tactics[0]->pricehistory,$tactics[0]->stockhistory,"tmp/".$tick.".png",$tactics[0]->todayproposition);
-        print '<img src="/Stocktool/tmp/'.$tick.'.png" />';
-
-        printt($tick . " " .
-            $botparameter . "  " .
-            average($data) . "  " .
-            min($data) . "  " .
-            max($data) . "  " .
-            $tactics[0]->todayproposition);
-        print("\r\n\r\n");
-        
-
-
+    $tactics = [];
+    foreach (Tactic::$available_tactics as $id) {
+        $tactics[] = new Tactic($id, $end, $end);
     }
-    
-}
 
+    foreach ($tactics as $tactic) {
+        for ($day = $end - $tactic_period; $day <= $end; $day++) {
+            $tactic->execute_day($prices[$day], $day, $prices);
+        }
+    }
+
+    draw2chart($tactics[0]->price_history, $tactics[0]->stock_history, "tmp/{$ticker}.png", $tactics[0]->today_proposition);
+    echo "<img src='/Stocktool/tmp/{$ticker}.png' />";
+}
 ?>
-
