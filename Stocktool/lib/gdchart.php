@@ -59,5 +59,5 @@ function saveChartImage($ydata,$y2data,$filename = "chart.png"), $description {
 }
 
 // Call function to save chart
-echo saveChartImage("chart.png");
+//echo saveChartImage("chart.png");
 ?>
