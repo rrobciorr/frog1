@@ -1,5 +1,5 @@
 <?php
-function saveChartImage($filename = "chart.png") {
+function saveChartImage($ydata,$y2data,$filename = "chart.png"), $description {
     // Image dimensions
     $width = 900;
     $height = 440;
@@ -17,8 +17,6 @@ function saveChartImage($filename = "chart.png") {
     imagefilledrectangle($image, 0, 0, $width, $height, $white);
 
     // Sample data
-    $ydata = [11, 3, 8, 12, 5, 1, 9, 13, 5, 7];
-    $y2data = [354, 200, 265, 99, 111, 91, 198, 225, 293, 751];
     $data_count = count($ydata);
 
     // Define chart area
