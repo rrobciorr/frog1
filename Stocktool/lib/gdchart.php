@@ -1,5 +1,5 @@
 <?php
-function saveChartImage($ydata,$y2data,$filename = "chart.png"), $description {
+function saveChartImage($ydata,$y2data,$filename = "chart.png", $description ){
     // Image dimensions
     $width = 900;
     $height = 440;
