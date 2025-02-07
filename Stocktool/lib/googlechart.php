@@ -1,24 +1,12 @@
 <?php
-// Generate random data for two lines
-$data1 = [];
-$data2 = [];
-$labels = [];
 
-for ($i = 1; $i <= 10; $i++) {
-    $labels[] = "Point " . $i;
-    $data1[] = rand(10, 100);
-    $data2[] = rand(50, 150);
-}
+function draw2chart($data1 = array(11,3,8,12,5,1,9,13,5,7),$data2 = array(354,200,265,99,111,91,198,225,293,751),$filename,$labels){
+  
 
 // Encode as JSON for JavaScript
 $chartData = json_encode([$labels, $data1, $data2]);
-?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Google Charts - Line Chart</title>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawChart);
@@ -39,8 +27,7 @@ $chartData = json_encode([$labels, $data1, $data2]);
             chart.draw(data, options);
         }
     </script>
-</head>
-<body>
+
     <div id="chart_div" style="width: 800px; height: 500px;"></div>
-</body>
-</html>
+
+}
