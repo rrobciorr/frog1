@@ -3,7 +3,7 @@
 // Include necessary libraries
 include "lib/conect.php";
 include "lib/view.php";
-include "lib/googlechart.php";
+include "lib/gdchart.php";
 
 /**
  * Calculate the average of the last $period elements in $data.
@@ -222,7 +222,7 @@ foreach (["AAPL", "SPY", "MCD", "PEP", "PFE", "WMT", "MSFT", "MAR"] as $ticker) 
         }
     }
 
-    draw2chart($tactics[0]->price_history, $tactics[0]->stock_history, "tmp/{$ticker}.png", $tactics[0]->today_proposition);
-    echo "<img src='/Stocktool/tmp/{$ticker}.png' />";
+    saveChartImage($tactics[0]->price_history, $tactics[0]->stock_history, "tmp/{$ticker}.png", $tactics[0]->today_proposition);
+    //echo "<img src='/Stocktool/tmp/{$ticker}.png' />";
 }
 ?>
