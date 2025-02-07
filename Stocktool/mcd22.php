@@ -3,7 +3,7 @@
 // Include necessary libraries
 include "lib/conect.php";
 include "lib/view.php";
-include "lib/example6.1.php";
+include "lib/googlechart.php";
 
 /**
  * Calculate the average of the last $period elements in $data.
