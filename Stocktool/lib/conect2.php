@@ -21,5 +21,5 @@ function fetchYahooFinanceData($ticker)
     return json_decode($response, true);
 }
 
-$stock_data = fetchYahooFinanceData("AAPL");
-print_r($stock_data);
+// $stock_data = fetchYahooFinanceData("AAPL"); //test 
+// print_r($stock_data);

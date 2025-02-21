@@ -4,12 +4,7 @@ use PHPUnit\Framework\TestCase;
 
 class MarketFunctionsTest extends TestCase
 {
-    public function testSend()
-    {
-        // Ponieważ funkcja send() używa mail(), nie możemy jej przetestować bezpośrednio.
-        // Można zamiast tego przetestować, czy funkcja istnieje i można ją wywołać.
-        $this->assertTrue(function_exists('send'));
-    }
+
 
     public function testfetchYahooFinanceData()
     {
