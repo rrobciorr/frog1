@@ -1,5 +1,5 @@
 <?php
-include "conect.php";
+include "conect2.php";
 use PHPUnit\Framework\TestCase;
 
 class MarketFunctionsTest extends TestCase
@@ -11,12 +11,12 @@ class MarketFunctionsTest extends TestCase
         $this->assertTrue(function_exists('send'));
     }
 
-    public function testGetPrices()
+    public function testfetchYahooFinanceData()
     {
         // Sprawdzamy, czy funkcja zwraca tablicę cen
-        $prices = get_prices("AAPL"); // Testujemy na popularnym tickerze
+        $prices = fetchYahooFinanceData("AAPL"); // Testujemy na popularnym tickerze
 
-        $this->assertIsArray($prices, "Funkcja get_prices() powinna zwracać tablicę");
+        $this->assertIsArray($prices, "Funkcja fetchYahooFinanceData() powinna zwracać tablicę");
         $this->assertNotEmpty($prices, "Tablica cen nie powinna być pusta");
 
         // Sprawdzamy, czy elementy tablicy są liczbami

@@ -19,5 +19,6 @@ function get_prices($tickr = "SPY")
     return $ydata;
 }
 
+print (get_prices("AAPL"))
 
-?>
+    ?>
