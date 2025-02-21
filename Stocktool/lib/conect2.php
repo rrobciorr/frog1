@@ -18,7 +18,16 @@ function fetchYahooFinanceData($ticker)
         die("Error: Failed to fetch data.");
     }
 
-    return json_decode($response, true);
+    // Decode the JSON response
+    $stock_data = json_decode($response, true);
+
+    // Check if the data exists and extract the 'close' values
+    if (isset($stock_data['chart']['result'][0]['indicators']['quote'][0]['close'])) {
+        $ydata = $stock_data['chart']['result'][0]['indicators']['quote'][0]['close'];
+        return $ydata;
+    } else {
+        die("Error: No close data found.");
+    }
 }
 
 // $stock_data = fetchYahooFinanceData("AAPL"); //test 
