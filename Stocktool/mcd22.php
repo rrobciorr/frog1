@@ -1,7 +1,7 @@
 <?php
 
 // Include necessary libraries
-include "lib/conect.php";
+include "lib/conect2.php";
 include "lib/view.php";
 include "lib/gdchart.php";
 
@@ -41,32 +41,32 @@ class Tactic
     public $id;
     public static array $available_tactics = [4];
     public ?string $description = null;
-    
+
     public $money = 10000;
     public $stock = 0;
     public array $stock_history = [];
     public array $price_history = [];
-    
+
     public $tactic_value = 12; // 0 - 100% 
     public $max_price = 0;
     public $income = 2000;
     public $income_growth = 1.01;
     public $normal_money = 10000;
-    
+
     public $buy_size = 3000;
     public $buy_period = 1; // Important value 
     public $sell_size = 15;
     public $sell_period = 30;
-    
+
     public $drop_history = [];
     public int $start;
     public int $end;
     public $price;
-    
+
     public $tactic2_value = 3;
     public $sma_period = 26;
     public $tactic_period = 580;
-    
+
     public $sma_value = 1;
     public $sma_history = [];
     public $year_gain_history = [];
@@ -135,7 +135,7 @@ class Tactic
             case 2: // Buy at Relative Drop
                 $this->description = "Buy at Relative Drop";
                 $this->max_price = max($this->max_price, $price);
-                $drop_value = ( ($price / $this->max_price) - 1 ) * 100;
+                $drop_value = (($price / $this->max_price) - 1) * 100;
                 $this->drop_history[] = $drop_value;
                 asort($this->drop_history);
 
@@ -207,7 +207,7 @@ class Tactic
 //////////////////  *MAIN SCRIPT*  //////////////////
 
 foreach (["AAPL", "SPY", "MCD", "PEP", "PFE", "WMT", "MSFT", "MAR"] as $ticker) {
-    $prices = get_prices($ticker);
+    $prices = fetchYahooFinanceData($ticker);
     $end = count($prices) - 1;
     $tactic_period = 580;
 
