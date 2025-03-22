@@ -65,6 +65,7 @@
     </div>
 	
 	<?php
+  echo "elo";
 	echo posix_getlogin(); //apache
 	?>
 
